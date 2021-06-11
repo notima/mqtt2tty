@@ -1,0 +1,1 @@
+apt install libmosquitto-dev libconfig-dev

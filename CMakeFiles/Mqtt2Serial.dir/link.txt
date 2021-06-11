@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/Mqtt2Serial.dir/main.cpp.o  -o Mqtt2Serial  -lmosquitto -ljansson -lutil 
