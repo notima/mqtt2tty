@@ -19,11 +19,10 @@ class MqttClient {
         multimap<string, MqttSubscriber*> subscriberMap;
 
     public:
-        MqttClient(char* id, char* host, int port = 1883, int keepAlive = 60);
+        MqttClient(const char* id, const char* host, int port = 1883, int keepAlive = 60);
         void addSubscriber(MqttSubscriber* subscriber);
         vector<MqttSubscriber*> getSubscribers(string topic);
         string getId();
-
 };
 
 extern map<mosquitto*, MqttClient*> clientMap;

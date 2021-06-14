@@ -1,4 +1,5 @@
 #include "mqttClient.h"
+#include "log.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,22 +11,39 @@ void onMessageReceived(struct mosquitto *client, void *obj, const struct mosquit
 
     for(MqttSubscriber* subscriber : mqttClient->getSubscribers(message->topic)) {
         subscriber->onMessage(message);
-        char msg[255];
-        sprintf( msg,
+        LOG_INFO(
             "%s received a message on subscriber %s: %s", 
             mqttClient->getId().c_str(), 
-            message->topic, 
+            subscriber->getId().c_str(), 
             (const char*)message->payload);
-        puts(msg);
     }
 }
 
-MqttClient::MqttClient(char* id, char* host, int port, int keepAlive){
-    this->id = id;
+MqttClient::MqttClient(const char* id, const char* host, int port, int keepAlive){
+    if(id != NULL)
+        this->id = id;
     this->host = host;
 
     // Create new client.
     mosquittoClient = mosquitto_new(id, true, NULL);
+
+    mosquitto_log_callback_set(mosquittoClient, [](mosquitto *mosq, void *obj, int level, const char *str){
+        switch(level){
+            case MOSQ_LOG_INFO:
+            case MOSQ_LOG_NOTICE:
+            LOG_INFO("MOSQUITTO: %s", str);
+            break;
+            case MOSQ_LOG_WARNING:
+            LOG_WARN("MOSQUITTO: %s", str);
+            break;
+            case MOSQ_LOG_ERR:
+            LOG_ERROR("MOSQUITTO: %s", str);
+            break;
+            case MOSQ_LOG_DEBUG:
+            LOG_DEBUG("MOSQUITTO: %s", str);
+            break;
+        }
+    });
 
     // Connect
     int result = mosquitto_connect(mosquittoClient, host, 1883, 60);
@@ -35,7 +53,6 @@ MqttClient::MqttClient(char* id, char* host, int port, int keepAlive){
     }
 
     mosquitto_message_callback_set(mosquittoClient, onMessageReceived);
-
     clientMap.insert(pair<mosquitto*, MqttClient*>(mosquittoClient, this));
 }
 
@@ -43,6 +60,7 @@ void MqttClient::addSubscriber(MqttSubscriber* subscriber){
     for(string topic: subscriber->getTopics()) {
         if(mosquitto_subscribe(mosquittoClient, NULL, topic.c_str(), 1)){
             perror("Subscription failed");
+            exit(-1);
         }else{
             subscriberMap.insert(pair<string, MqttSubscriber*>(topic, subscriber));
         }

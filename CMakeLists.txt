@@ -6,9 +6,10 @@ enable_testing()
 
 add_executable(Mqtt2Serial main.cpp)
 target_sources(Mqtt2Serial PRIVATE tty.cpp)
+target_sources(Mqtt2Serial PRIVATE pty.cpp)
 target_sources(Mqtt2Serial PRIVATE mqttClient.cpp)
 target_sources(Mqtt2Serial PRIVATE mqttSubscriber.cpp)
-target_link_libraries(Mqtt2Serial LINK_PUBLIC mosquitto jansson util config)
+target_link_libraries(Mqtt2Serial LINK_PUBLIC mosquitto jansson util config log4cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

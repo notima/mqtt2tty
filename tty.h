@@ -2,23 +2,18 @@
 #define CL_TTY
 
 #include <termios.h>
+#include <string>
+
+using namespace std;
 
 class Tty {
     protected:
-        char slaveName[256];
-        const char* symlinkName;
-        struct termios tt;
-        int masterFileDescriptor;
-        int slaveFileDescriptor;
-
-        void openTty();
-        void createSymlink();
+        string fileName;
 
     public:
 
         /**
-         * @tparam name The full path to the symlink file that the tty
-         *      can be accessed through.
+         * @tparam name The full path to the tty file.
          */
         Tty(const char* name);
 
@@ -28,7 +23,7 @@ class Tty {
          * 
          * @tparam data The text to write.
          */
-        void type(char* data);
+        void type(const char* data);
 };
 
 #endif

@@ -1,96 +1,143 @@
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
-#include <jansson.h>
-#include <jansson_config.h>
 #include <unistd.h>
 #include <signal.h>
 #include <libconfig.h>
 #include "tty.h"
 #include "mqttClient.h"
+#include "log.h"
 
 using namespace std;
 
-struct mosquitto *client;
+log4cpp::Category& root = log4cpp::Category::getRoot();
+char log_buff[255];
 
-char* serialCpy;
-
-json_t *server, *topic;
-json_t *serialPort;
-
-char config_file[] = "default.json";
-
-char topicStr[255];
-
-unsigned int baudRate = 115200;
-
-Tty *tty;
-
-#define BUFSIZE 2048
+char config_file[] = "/home/oliver/Documents/mqtt2serial/build/default.cfg";
 
 auto onExit = [] (int i) { 
     cout << endl;
+    map<mosquitto*, MqttClient*>::iterator it;
+    for (it = clientMap.begin(); it != clientMap.end(); it++) {
+        mosquitto_destroy(it->first);
+    }
+    mosquitto_lib_cleanup();
     exit(0);
 };
 
-void on_message1(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message)
-{
-    //cout << "Got a message\n";
-    //cout << (char*)(message->payload) << endl;
-    //tty->type((char*)(message->payload));
-}  
+char *randomString(int length) {    
+    static int mySeed = 25011984;
+    const char *string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    size_t stringLen = strlen(string);        
+    char *randomString = NULL;
 
-static int readConfigurationFile(char* filename) {
+    srand(time(NULL) * length + ++mySeed);
 
-    json_t *root, *data;
-    json_error_t error;
-
-    char buff[FILENAME_MAX];
-    char pathChar[] = "/";
-    getcwd(buff, FILENAME_MAX);
-
-    char* newPath = NULL;
-    char* finalPath = NULL;
-
-    if (filename[0] != '/') {
-        newPath = strcat(buff, pathChar);
-        finalPath = strcat(newPath, filename);
+    if (length < 1) {
+        length = 1;
     }
 
-    root = json_load_file(finalPath, 0, &error);
+    randomString = (char*)malloc(sizeof(char) * (length +1));
 
-    // free(finalPath);
+    if (randomString) {
+        short key = 0;
 
-    server = json_object_get(root, "server");
-    if(!json_is_string(server))
-    {
-        fprintf(stderr, "error: server is not a string\n");
-        json_decref(root);
-        return 1;
+        for (int n = 0;n < length;n++) {            
+            key = rand() % stringLen;          
+            randomString[n] = string[key];
+        }
+
+        randomString[length] = '\0';
+
+        return randomString;        
+    }
+    else {
+        printf("No memory");
+        exit(1);
+    }
+}
+
+static void initSubscribers(config_t cfg, MqttClient* client, config_list_t* subscriberList){
+    for(int i = 0; i < subscriberList->length; i++){
+        config_setting_t* subscriberCfg = subscriberList->elements[i];
+        const char* id;
+        const char* topic;
+        vector<string> topics;
+        const char* destination;
+        vector<string> destinations;
+
+        if(config_setting_lookup_string(subscriberCfg, "id", &id) == CONFIG_FALSE){
+            char subName[26] = "sub-";
+            id = strcat(subName, randomString(18));
+        }
+
+        if(config_setting_lookup_string(subscriberCfg, "topic", &topic)){
+            topics.push_back(topic);
+        }
+        config_setting_t* topicList = config_setting_lookup(subscriberCfg, "topics");
+        if(topicList)
+            for(int i = 0; i < topicList->value.list->length; i++)
+                topics.push_back(topicList->value.list->elements[i]->value.sval);
+        
+        if(config_setting_lookup_string(subscriberCfg, "destination", &destination)){
+            destinations.push_back(destination);
+        }
+        config_setting_t* destinationList = config_setting_lookup(subscriberCfg, "destinations");
+        if(destinationList)
+            for(int i = 0; i < destinationList->value.list->length; i++)
+                destinations.push_back(destinationList->value.list->elements[i]->value.sval);
+
+        LOG_INFO("Creating subscriber %s.", id);
+        MqttSubscriber* subscriber = new MqttSubscriber(id, topics, destinations);
+
+        int insertNewLine = CONFIG_FALSE;
+        if(config_setting_lookup_bool(subscriberCfg, "insertNewLine", &insertNewLine)){
+            subscriber->setInsertNewLine(insertNewLine == CONFIG_TRUE);
+        }
+
+        client->addSubscriber(subscriber);
+    }
+}
+
+static void initClients(config_t cfg, config_list_t* clientList){
+    LOG_INFO("Initializing %d client(s)...", clientList->length);
+    for(int i = 0; i < clientList->length; i++){
+        config_setting_t* clientCfg = clientList->elements[i];
+        const char* id;
+        const char* host;
+        int port = 1883;
+        int keepAlive = 60;
+        if(config_setting_lookup_string(clientCfg, "id", &id) == CONFIG_FALSE){
+            char clientName[26] = "client-";
+            id = strcat(clientName, randomString(18));
+        }
+        config_setting_lookup_string(clientCfg, "host", &host);
+        config_setting_lookup_int(clientCfg, "port", &port);
+        config_setting_lookup_int(clientCfg, "keepAlive", &keepAlive);
+        MqttClient* client = new MqttClient(id, host, port, keepAlive);
+        config_setting_t* subscriberList = config_setting_lookup(clientCfg, "subscribers");
+        initSubscribers(cfg, client, subscriberList->value.list);
+        LOG_INFO("Client %s initialized.", id);
+    }
+}
+
+static void readConfigurationFile(char* filename) {
+    config_t cfg;
+    config_init(&cfg);
+
+    if(!config_read_file(&cfg, filename)){
+        LOG_ERROR( 
+            "Error reading config file %s\n%s:%d - %s", 
+            filename, 
+            config_error_file(&cfg),
+            config_error_line(&cfg), 
+            config_error_text(&cfg));
+        config_destroy(&cfg);
+        exit(EXIT_FAILURE);
     }
 
-    topic = json_object_get(root, "topic");
-    if(!json_is_string(topic))
-    {
-        fprintf(stderr, "error: topic is not a string\n");
-        json_decref(root);
-        return 1;
-    }
-
-    serialPort = json_object_get(root, "serialPort");
-    if (!json_is_string(serialPort)) {
-        fprintf(stderr, "error: serialPort is not a string\n");
-        json_decref(root);
-        return 1;
-    }
-
-    data = json_object_get(root, "baudRate");
-    if (data) {
-        baudRate = json_integer_value(data);
-    }
-
-    return  0;
-
+    config_setting_t* clientList = config_lookup(&cfg, "mqttClients");
+    initClients(cfg, clientList->value.list);
 }
 
 void loop() {
@@ -102,6 +149,12 @@ void loop() {
 }
 
 int main(int argc, char** argv)  {
+
+    std::string initFileName = "log4cpp.properties";
+	log4cpp::PropertyConfigurator::configure(initFileName);
+
+	root.warn("Storm is coming");
+	root.info("Ready for storm.");
 
     // Make sure onExit is run whenever the program is stopped.
 
@@ -122,34 +175,13 @@ int main(int argc, char** argv)  {
     int revision;
 
     mosquitto_lib_version(&major, &minor, &revision);
-    printf("Mosquitto library version %d.%d.%d\n", major, minor, revision);
+    LOG_INFO("Mosquitto version %d.%d.%d", major, minor, revision);
 
-    char serialBuf[BUFSIZE];
-
-    std::cout << argv[0];
     if (argc==1) {
         readConfigurationFile(config_file);
     } else {
         readConfigurationFile(argv[1]);
     }
 
-    speed_t baud = baudRate;
-
-    MqttClient* client = new MqttClient("client 1", "localhost");
-    MqttSubscriber* subscriber = new MqttSubscriber("sub 1", {"t1", "t2"}, {"/dev/ttyMQTT_t1"});
-    client->addSubscriber(subscriber);
-
-    MqttClient* client2 = new MqttClient("client 2", "localhost");
-    MqttSubscriber* subscriber2 = new MqttSubscriber("sub 2", {"t2", "t3"}, {"/dev/ttyMQTT_t2"});
-    client2->addSubscriber(subscriber2);
-
     loop();
-
-    //mosquitto_loop_forever(client, -1, 1);
-
-    //mosquitto_destroy(client);
-    
-    //osquitto_lib_cleanup();
-    
-    //printf("Result %d\n", result);
 }
