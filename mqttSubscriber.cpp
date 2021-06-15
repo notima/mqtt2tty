@@ -1,11 +1,14 @@
 #include "mqttSubscriber.h"
 #include "log.h"
+#include "pty.h"
 
-MqttSubscriber::MqttSubscriber(string id, vector<string> topics, vector<string> destinationPaths, bool createDestIfNotExists) {
+MqttSubscriber::MqttSubscriber(string id, vector<string> topics, vector<string> destinationPaths, bool pseudo) {
     this->id = id;
     this->topics = topics;
     for(string path : destinationPaths) {
-        destinations.push_back(new Tty(path.c_str()));
+        Tty* tty = pseudo ? new Pty(path.c_str()) : new Tty(path.c_str());
+        tty->openTty();
+        destinations.push_back(tty);
     }
 }
 
@@ -26,6 +29,11 @@ vector<string> MqttSubscriber::getTopics(){
 }
 
 void MqttSubscriber::setInsertNewLine(bool insertNewLine){
-    LOG_INFO("%s", insertNewLine ? "true" : "false");
     this->insertNewLine = insertNewLine;
+}
+
+void MqttSubscriber::setTtyBaudRate(int baudRate) {
+    for(Tty* tty : destinations) {
+        tty->setBaudRate(baudRate);
+    }
 }

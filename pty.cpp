@@ -34,40 +34,31 @@ void unlink(){
 	while(createdSymlinks.size() > 0){
 		LOG_INFO("Removing symlink %s", createdSymlinks.back().c_str());
 		if(remove(createdSymlinks.back().c_str())) {
-			perror("Symlink can not be destroyed");
-		}else{
+			LOG_ERROR("Symlink can not be destroyed");
 		}
 		createdSymlinks.pop_back();
 	}
 }
 
 Pty::Pty (const char* name) : Tty(name) {
-    symlinkName = name;
-    openTty();
-    createSymlink();
-}
-
-void Pty::type(const char* data) {
-	std::string dataStr(data);
-	size_t dataLength = dataStr.length();
-	(void) write(masterFileDescriptor, data, dataLength);
+    symlinkName = fileName.c_str();
 }
 
 void Pty::openTty(){
 
     struct termios tt;
 
-    if (tcgetattr (STDIN_FILENO, &tt) < 0)
-    {
+    if (tcgetattr (STDIN_FILENO, &tt) < 0) {
         LOG_ERROR("Cannot get terminal attributes of stdin");
         exit(1);
     }
     cfmakeraw (&tt);
-    if (openpty (&masterFileDescriptor, &slaveFileDescriptor, slaveName, &tt, NULL) < 0)
-    {
+    if (openpty (&ttyFileDescriptor, &slaveFileDescriptor, slaveName, &tt, NULL) < 0) {
         LOG_ERROR("Cannot open pty");
         exit(1);
     }
+    
+    createSymlink();
 }
 
 void Pty::createSymlink(){

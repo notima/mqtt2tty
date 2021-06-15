@@ -11,7 +11,8 @@
 using namespace std;
 
 log4cpp::Category& root = log4cpp::Category::getRoot();
-char log_buff[255];
+char log_buff[512];
+char err_buff[512];
 
 char config_file[] = "/home/oliver/Documents/mqtt2serial/build/default.cfg";
 
@@ -86,13 +87,21 @@ static void initSubscribers(config_t cfg, MqttClient* client, config_list_t* sub
         if(destinationList)
             for(int i = 0; i < destinationList->value.list->length; i++)
                 destinations.push_back(destinationList->value.list->elements[i]->value.sval);
+        
+        int pseudo = CONFIG_FALSE;
+        config_setting_lookup_bool(subscriberCfg, "createPTY", &pseudo);
 
         LOG_INFO("Creating subscriber %s.", id);
-        MqttSubscriber* subscriber = new MqttSubscriber(id, topics, destinations);
+        MqttSubscriber* subscriber = new MqttSubscriber(id, topics, destinations, pseudo == CONFIG_TRUE);
 
         int insertNewLine = CONFIG_FALSE;
         if(config_setting_lookup_bool(subscriberCfg, "insertNewLine", &insertNewLine)){
             subscriber->setInsertNewLine(insertNewLine == CONFIG_TRUE);
+        }
+
+        int baudRate;
+        if(config_setting_lookup_int(subscriberCfg, "baud", &baudRate)){
+            subscriber->setTtyBaudRate(baudRate);
         }
 
         client->addSubscriber(subscriber);
@@ -150,11 +159,9 @@ void loop() {
 
 int main(int argc, char** argv)  {
 
+    // Initialize log4cpp
     std::string initFileName = "log4cpp.properties";
 	log4cpp::PropertyConfigurator::configure(initFileName);
-
-	root.warn("Storm is coming");
-	root.info("Ready for storm.");
 
     // Make sure onExit is run whenever the program is stopped.
 

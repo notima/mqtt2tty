@@ -2,7 +2,6 @@
 #define CL_PTY
 
 #include "tty.h"
-#include <termios.h>
 
 /**
  * Pseudo terminal extention of Tty class
@@ -11,11 +10,7 @@ class Pty : public Tty {
     protected:
         char slaveName[256];
         const char* symlinkName;
-        struct termios tt;
-        int masterFileDescriptor;
         int slaveFileDescriptor;
-
-        void openTty();
         void createSymlink();
 
     public:
@@ -33,6 +28,8 @@ class Pty : public Tty {
          * @tparam data The text to write.
          */
         void type(const char* data);
+
+        void openTty();
 };
 
 #endif

@@ -19,9 +19,10 @@ class MqttSubscriber {
         vector<Tty*> destinations;
 
     public:
-        MqttSubscriber(string id, vector<string> topics, vector<string> destinationPaths, bool createDestIfNotExists = true);
+        MqttSubscriber(string id, vector<string> topics, vector<string> destinationPaths, bool pseudo = false);
         void onMessage(const struct mosquitto_message *message);
         string getId();
         vector<string> getTopics();
         void setInsertNewLine(bool insertNewLine);
+        void setTtyBaudRate(int baudRate);
 };

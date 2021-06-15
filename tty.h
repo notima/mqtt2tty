@@ -8,7 +8,9 @@ using namespace std;
 
 class Tty {
     protected:
+        struct termios tt;
         string fileName;
+        int ttyFileDescriptor;
 
     public:
 
@@ -24,6 +26,10 @@ class Tty {
          * @tparam data The text to write.
          */
         void type(const char* data);
+
+        virtual void openTty();
+
+        void setBaudRate(int baudRate);
 };
 
 #endif

@@ -10,12 +10,12 @@ void onMessageReceived(struct mosquitto *client, void *obj, const struct mosquit
     MqttClient* mqttClient = clientMap.at(client);
 
     for(MqttSubscriber* subscriber : mqttClient->getSubscribers(message->topic)) {
-        subscriber->onMessage(message);
         LOG_INFO(
             "%s received a message on subscriber %s: %s", 
             mqttClient->getId().c_str(), 
             subscriber->getId().c_str(), 
             (const char*)message->payload);
+        subscriber->onMessage(message);
     }
 }
 
@@ -48,7 +48,7 @@ MqttClient::MqttClient(const char* id, const char* host, int port, int keepAlive
     // Connect
     int result = mosquitto_connect(mosquittoClient, host, 1883, 60);
     if (result!=MOSQ_ERR_SUCCESS) {
-        perror("Error connecting");
+        LOG_ERROR("Error connecting");
         exit(-1);
     }
 
@@ -59,7 +59,7 @@ MqttClient::MqttClient(const char* id, const char* host, int port, int keepAlive
 void MqttClient::addSubscriber(MqttSubscriber* subscriber){
     for(string topic: subscriber->getTopics()) {
         if(mosquitto_subscribe(mosquittoClient, NULL, topic.c_str(), 1)){
-            perror("Subscription failed");
+            LOG_ERROR("Subscription failed");
             exit(-1);
         }else{
             subscriberMap.insert(pair<string, MqttSubscriber*>(topic, subscriber));
