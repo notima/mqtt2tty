@@ -45,15 +45,17 @@ MqttClient::MqttClient(const char* id, const char* host, int port, int keepAlive
         }
     });
 
+    mosquitto_message_callback_set(mosquittoClient, onMessageReceived);
+    clientMap.insert(pair<mosquitto*, MqttClient*>(mosquittoClient, this));
+}
+
+void MqttClient::connect(){
     // Connect
-    int result = mosquitto_connect(mosquittoClient, host, 1883, 60);
+    int result = mosquitto_connect(mosquittoClient, host.c_str(), port, keepAlive);
     if (result!=MOSQ_ERR_SUCCESS) {
         LOG_ERROR("Error connecting");
         exit(-1);
     }
-
-    mosquitto_message_callback_set(mosquittoClient, onMessageReceived);
-    clientMap.insert(pair<mosquitto*, MqttClient*>(mosquittoClient, this));
 }
 
 void MqttClient::addSubscriber(MqttSubscriber* subscriber){
@@ -77,4 +79,8 @@ vector<MqttSubscriber*> MqttClient::getSubscribers(string topic){
 
 string MqttClient::getId() {
     return id;
+}
+
+struct mosquitto* MqttClient::getMosquittoClient(){
+    return mosquittoClient;
 }

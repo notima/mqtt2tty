@@ -13,16 +13,16 @@ class MqttClient {
         string host;
         int port;
         int keepAlive;
-        string user;
-        string pass;
         struct mosquitto* mosquittoClient;
         multimap<string, MqttSubscriber*> subscriberMap;
 
     public:
         MqttClient(const char* id, const char* host, int port = 1883, int keepAlive = 60);
+        void connect();
         void addSubscriber(MqttSubscriber* subscriber);
         vector<MqttSubscriber*> getSubscribers(string topic);
         string getId();
+        struct mosquitto* getMosquittoClient();
 };
 
 extern map<mosquitto*, MqttClient*> clientMap;

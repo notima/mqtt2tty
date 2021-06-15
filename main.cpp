@@ -124,6 +124,78 @@ static void initClients(config_t cfg, config_list_t* clientList){
         config_setting_lookup_int(clientCfg, "port", &port);
         config_setting_lookup_int(clientCfg, "keepAlive", &keepAlive);
         MqttClient* client = new MqttClient(id, host, port, keepAlive);
+
+        const char* username;
+        const char* password;
+        if(
+            config_setting_lookup_string(clientCfg, "username", &username) == CONFIG_TRUE && 
+            config_setting_lookup_string(clientCfg, "password", &password) == CONFIG_TRUE
+        ){
+            mosquitto_username_pw_set(client->getMosquittoClient(), username, password);
+        }
+
+        config_setting_t* tlsSettings = config_setting_lookup(clientCfg, "tls");
+        if(tlsSettings){
+            const char* caFile;
+            const char* caPath;
+            const char* certFile;
+            const char* keyFile;
+            config_setting_lookup_string(tlsSettings, "caFile", &caFile);
+            config_setting_lookup_string(tlsSettings, "caPath", &caPath);
+            config_setting_lookup_string(tlsSettings, "certFile", &certFile);
+            config_setting_lookup_string(tlsSettings, "keyFile", &keyFile);
+            mosquitto_tls_set(
+                client->getMosquittoClient(), 
+                caFile, 
+                caPath, 
+                certFile, 
+                keyFile, 
+                [](char *buf, int size, int rwflag, void *userdata) -> int {
+                    //TODO: write the password to buf and return length of password.
+                    LOG_WARN("TLS certificate requires password. This is not yet supported");
+                    return 0;
+                }
+            );
+
+            config_setting_t* tlsOptsSettings = config_setting_lookup(tlsSettings, "tls");
+            if(tlsOptsSettings){
+                int certReqs;
+                const char* tlsVersion;
+                const char* ciphers;
+                config_setting_lookup_int(tlsOptsSettings, "certReqs", &certReqs);
+                config_setting_lookup_string(tlsOptsSettings, "tlsVersion", &tlsVersion);
+                config_setting_lookup_string(tlsOptsSettings, "ciphers", &ciphers);
+                mosquitto_tls_opts_set(
+                    client->getMosquittoClient(),
+                    certReqs,
+                    tlsVersion,
+                    ciphers
+                );
+            }
+
+            int insecure;
+            if(config_setting_lookup_bool(tlsSettings, "insecure", &insecure)){
+                mosquitto_tls_insecure_set(client->getMosquittoClient(), insecure == CONFIG_TRUE);
+            }
+
+            config_setting_t* tlsPskSettings = config_setting_lookup(tlsSettings, "psk");
+            if(tlsPskSettings){
+                const char* psk;
+                const char* identity;
+                const char* ciphers;
+                config_setting_lookup_string(tlsPskSettings, "psk", &psk);
+                config_setting_lookup_string(tlsPskSettings, "identity", &identity);
+                config_setting_lookup_string(tlsPskSettings, "ciphers", &ciphers);
+                mosquitto_tls_psk_set(
+                    client->getMosquittoClient(),
+                    psk,
+                    identity,
+                    ciphers
+                );
+            }
+        }
+
+        client->connect();
         config_setting_t* subscriberList = config_setting_lookup(clientCfg, "subscribers");
         initSubscribers(cfg, client, subscriberList->value.list);
         LOG_INFO("Client %s initialized.", id);
