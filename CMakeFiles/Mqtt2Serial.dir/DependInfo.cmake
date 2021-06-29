@@ -5,6 +5,10 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/oliver/Documents/mqtt2serial/main.cpp" "/home/oliver/Documents/mqtt2serial/CMakeFiles/Mqtt2Serial.dir/main.cpp.o"
+  "/home/oliver/Documents/mqtt2serial/mqttClient.cpp" "/home/oliver/Documents/mqtt2serial/CMakeFiles/Mqtt2Serial.dir/mqttClient.cpp.o"
+  "/home/oliver/Documents/mqtt2serial/mqttSubscriber.cpp" "/home/oliver/Documents/mqtt2serial/CMakeFiles/Mqtt2Serial.dir/mqttSubscriber.cpp.o"
+  "/home/oliver/Documents/mqtt2serial/pty.cpp" "/home/oliver/Documents/mqtt2serial/CMakeFiles/Mqtt2Serial.dir/pty.cpp.o"
+  "/home/oliver/Documents/mqtt2serial/tty.cpp" "/home/oliver/Documents/mqtt2serial/CMakeFiles/Mqtt2Serial.dir/tty.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

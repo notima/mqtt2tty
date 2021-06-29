@@ -1,1 +1,1 @@
-/usr/bin/c++    -rdynamic CMakeFiles/Mqtt2Serial.dir/main.cpp.o  -o Mqtt2Serial  -lmosquitto -ljansson -lutil 
+/usr/bin/c++    -rdynamic CMakeFiles/Mqtt2Serial.dir/main.cpp.o CMakeFiles/Mqtt2Serial.dir/tty.cpp.o CMakeFiles/Mqtt2Serial.dir/pty.cpp.o CMakeFiles/Mqtt2Serial.dir/mqttClient.cpp.o CMakeFiles/Mqtt2Serial.dir/mqttSubscriber.cpp.o  -o Mqtt2Serial  -lmosquitto -lutil -lconfig -llog4cpp 

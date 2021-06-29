@@ -70,17 +70,77 @@ CMakeFiles/Mqtt2Serial.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Mqtt2Serial.dir/main.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/oliver/Documents/mqtt2serial/main.cpp -o CMakeFiles/Mqtt2Serial.dir/main.cpp.s
 
+CMakeFiles/Mqtt2Serial.dir/tty.cpp.o: CMakeFiles/Mqtt2Serial.dir/flags.make
+CMakeFiles/Mqtt2Serial.dir/tty.cpp.o: tty.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/oliver/Documents/mqtt2serial/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Mqtt2Serial.dir/tty.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Mqtt2Serial.dir/tty.cpp.o -c /home/oliver/Documents/mqtt2serial/tty.cpp
+
+CMakeFiles/Mqtt2Serial.dir/tty.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Mqtt2Serial.dir/tty.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/oliver/Documents/mqtt2serial/tty.cpp > CMakeFiles/Mqtt2Serial.dir/tty.cpp.i
+
+CMakeFiles/Mqtt2Serial.dir/tty.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Mqtt2Serial.dir/tty.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/oliver/Documents/mqtt2serial/tty.cpp -o CMakeFiles/Mqtt2Serial.dir/tty.cpp.s
+
+CMakeFiles/Mqtt2Serial.dir/pty.cpp.o: CMakeFiles/Mqtt2Serial.dir/flags.make
+CMakeFiles/Mqtt2Serial.dir/pty.cpp.o: pty.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/oliver/Documents/mqtt2serial/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/Mqtt2Serial.dir/pty.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Mqtt2Serial.dir/pty.cpp.o -c /home/oliver/Documents/mqtt2serial/pty.cpp
+
+CMakeFiles/Mqtt2Serial.dir/pty.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Mqtt2Serial.dir/pty.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/oliver/Documents/mqtt2serial/pty.cpp > CMakeFiles/Mqtt2Serial.dir/pty.cpp.i
+
+CMakeFiles/Mqtt2Serial.dir/pty.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Mqtt2Serial.dir/pty.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/oliver/Documents/mqtt2serial/pty.cpp -o CMakeFiles/Mqtt2Serial.dir/pty.cpp.s
+
+CMakeFiles/Mqtt2Serial.dir/mqttClient.cpp.o: CMakeFiles/Mqtt2Serial.dir/flags.make
+CMakeFiles/Mqtt2Serial.dir/mqttClient.cpp.o: mqttClient.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/oliver/Documents/mqtt2serial/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/Mqtt2Serial.dir/mqttClient.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Mqtt2Serial.dir/mqttClient.cpp.o -c /home/oliver/Documents/mqtt2serial/mqttClient.cpp
+
+CMakeFiles/Mqtt2Serial.dir/mqttClient.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Mqtt2Serial.dir/mqttClient.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/oliver/Documents/mqtt2serial/mqttClient.cpp > CMakeFiles/Mqtt2Serial.dir/mqttClient.cpp.i
+
+CMakeFiles/Mqtt2Serial.dir/mqttClient.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Mqtt2Serial.dir/mqttClient.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/oliver/Documents/mqtt2serial/mqttClient.cpp -o CMakeFiles/Mqtt2Serial.dir/mqttClient.cpp.s
+
+CMakeFiles/Mqtt2Serial.dir/mqttSubscriber.cpp.o: CMakeFiles/Mqtt2Serial.dir/flags.make
+CMakeFiles/Mqtt2Serial.dir/mqttSubscriber.cpp.o: mqttSubscriber.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/oliver/Documents/mqtt2serial/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/Mqtt2Serial.dir/mqttSubscriber.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Mqtt2Serial.dir/mqttSubscriber.cpp.o -c /home/oliver/Documents/mqtt2serial/mqttSubscriber.cpp
+
+CMakeFiles/Mqtt2Serial.dir/mqttSubscriber.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Mqtt2Serial.dir/mqttSubscriber.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/oliver/Documents/mqtt2serial/mqttSubscriber.cpp > CMakeFiles/Mqtt2Serial.dir/mqttSubscriber.cpp.i
+
+CMakeFiles/Mqtt2Serial.dir/mqttSubscriber.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Mqtt2Serial.dir/mqttSubscriber.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/oliver/Documents/mqtt2serial/mqttSubscriber.cpp -o CMakeFiles/Mqtt2Serial.dir/mqttSubscriber.cpp.s
+
 # Object files for target Mqtt2Serial
 Mqtt2Serial_OBJECTS = \
-"CMakeFiles/Mqtt2Serial.dir/main.cpp.o"
+"CMakeFiles/Mqtt2Serial.dir/main.cpp.o" \
+"CMakeFiles/Mqtt2Serial.dir/tty.cpp.o" \
+"CMakeFiles/Mqtt2Serial.dir/pty.cpp.o" \
+"CMakeFiles/Mqtt2Serial.dir/mqttClient.cpp.o" \
+"CMakeFiles/Mqtt2Serial.dir/mqttSubscriber.cpp.o"
 
 # External object files for target Mqtt2Serial
 Mqtt2Serial_EXTERNAL_OBJECTS =
 
 Mqtt2Serial: CMakeFiles/Mqtt2Serial.dir/main.cpp.o
+Mqtt2Serial: CMakeFiles/Mqtt2Serial.dir/tty.cpp.o
+Mqtt2Serial: CMakeFiles/Mqtt2Serial.dir/pty.cpp.o
+Mqtt2Serial: CMakeFiles/Mqtt2Serial.dir/mqttClient.cpp.o
+Mqtt2Serial: CMakeFiles/Mqtt2Serial.dir/mqttSubscriber.cpp.o
 Mqtt2Serial: CMakeFiles/Mqtt2Serial.dir/build.make
 Mqtt2Serial: CMakeFiles/Mqtt2Serial.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/oliver/Documents/mqtt2serial/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable Mqtt2Serial"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/oliver/Documents/mqtt2serial/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable Mqtt2Serial"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/Mqtt2Serial.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

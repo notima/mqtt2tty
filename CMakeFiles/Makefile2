@@ -858,12 +858,12 @@ CMakeFiles/ContinuousSubmit.dir/clean:
 CMakeFiles/Mqtt2Serial.dir/all:
 	$(MAKE) -f CMakeFiles/Mqtt2Serial.dir/build.make CMakeFiles/Mqtt2Serial.dir/depend
 	$(MAKE) -f CMakeFiles/Mqtt2Serial.dir/build.make CMakeFiles/Mqtt2Serial.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/oliver/Documents/mqtt2serial/CMakeFiles --progress-num=1,2 "Built target Mqtt2Serial"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/oliver/Documents/mqtt2serial/CMakeFiles --progress-num=1,2,3,4,5,6 "Built target Mqtt2Serial"
 .PHONY : CMakeFiles/Mqtt2Serial.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/Mqtt2Serial.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/oliver/Documents/mqtt2serial/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/oliver/Documents/mqtt2serial/CMakeFiles 6
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/Mqtt2Serial.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/oliver/Documents/mqtt2serial/CMakeFiles 0
 .PHONY : CMakeFiles/Mqtt2Serial.dir/rule
