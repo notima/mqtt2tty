@@ -4,7 +4,7 @@
 #include <string.h>
 
 #if !defined LOGGING_MACROS
-extern char log_buff[512];
+extern char log_buff[510];
 extern char err_buff[512];
 #define LOG_DEBUG(...) sprintf(log_buff, __VA_ARGS__); root.debug(log_buff);
 #define LOG_INFO(...) sprintf(log_buff, __VA_ARGS__); root.info(log_buff);

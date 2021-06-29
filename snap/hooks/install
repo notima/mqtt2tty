@@ -1,0 +1,3 @@
+#!/bin/sh -e
+
+cp -r $SNAP/etc-default/* $SNAP_DATA/etc/

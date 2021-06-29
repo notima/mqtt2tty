@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -11,13 +12,13 @@
 using namespace std;
 
 log4cpp::Category& root = log4cpp::Category::getRoot();
-char log_buff[512];
+char log_buff[510];
 char err_buff[512];
 
-char config_file[] = "/home/oliver/Documents/mqtt2serial/build/default.cfg";
+char config_file[] = "/etc/mqtt2tty/default.cfg";
 
-auto onExit = [] (int i) { 
-    cout << endl;
+auto onExit = [] (int signal) { 
+    LOG_INFO("\n=======\nEXITING\n=======");
     map<mosquitto*, MqttClient*>::iterator it;
     for (it = clientMap.begin(); it != clientMap.end(); it++) {
         mosquitto_destroy(it->first);
@@ -81,6 +82,7 @@ static void initSubscribers(config_t cfg, MqttClient* client, config_list_t* sub
                 topics.push_back(topicList->value.list->elements[i]->value.sval);
         
         if(config_setting_lookup_string(subscriberCfg, "destination", &destination)){
+            LOG_DEBUG("adding destination: %s", destination);
             destinations.push_back(destination);
         }
         config_setting_t* destinationList = config_setting_lookup(subscriberCfg, "destinations");
@@ -135,7 +137,7 @@ static void initClients(config_t cfg, config_list_t* clientList){
         }
 
         config_setting_t* tlsSettings = config_setting_lookup(clientCfg, "tls");
-        if(tlsSettings){
+        if(tlsSettings != NULL){
             const char* caFile;
             const char* caPath;
             const char* certFile;
@@ -158,7 +160,7 @@ static void initClients(config_t cfg, config_list_t* clientList){
             );
 
             config_setting_t* tlsOptsSettings = config_setting_lookup(tlsSettings, "tls");
-            if(tlsOptsSettings){
+            if(tlsOptsSettings != NULL){
                 int certReqs;
                 const char* tlsVersion;
                 const char* ciphers;
@@ -174,12 +176,12 @@ static void initClients(config_t cfg, config_list_t* clientList){
             }
 
             int insecure;
-            if(config_setting_lookup_bool(tlsSettings, "insecure", &insecure)){
+            if(config_setting_lookup_bool(tlsSettings, "insecure", &insecure) != CONFIG_TRUE){
                 mosquitto_tls_insecure_set(client->getMosquittoClient(), insecure == CONFIG_TRUE);
             }
 
             config_setting_t* tlsPskSettings = config_setting_lookup(tlsSettings, "psk");
-            if(tlsPskSettings){
+            if(tlsPskSettings != NULL){
                 const char* psk;
                 const char* identity;
                 const char* ciphers;
@@ -203,6 +205,7 @@ static void initClients(config_t cfg, config_list_t* clientList){
 }
 
 static void readConfigurationFile(char* filename) {
+    LOG_DEBUG("Using configuration file: %s", filename);
     config_t cfg;
     config_init(&cfg);
 
@@ -232,8 +235,10 @@ void loop() {
 int main(int argc, char** argv)  {
 
     // Initialize log4cpp
-    std::string initFileName = "log4cpp.properties";
-	log4cpp::PropertyConfigurator::configure(initFileName);
+    std::string initFileName = "/etc/mqtt2tty/log4cpp.properties";
+    log4cpp::PropertyConfigurator::configure(initFileName);
+
+    LOG_INFO("\n====================\nSTARTING APPLICATION\n====================");
 
     // Make sure onExit is run whenever the program is stopped.
 

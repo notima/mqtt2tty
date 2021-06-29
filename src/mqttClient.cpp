@@ -23,6 +23,8 @@ MqttClient::MqttClient(const char* id, const char* host, int port, int keepAlive
     if(id != NULL)
         this->id = id;
     this->host = host;
+    this->port = port;
+    this->keepAlive = keepAlive;
 
     // Create new client.
     mosquittoClient = mosquitto_new(id, true, NULL);
@@ -50,10 +52,16 @@ MqttClient::MqttClient(const char* id, const char* host, int port, int keepAlive
 }
 
 void MqttClient::connect(){
+    LOG_DEBUG("\nHost: %s\nPort: %d\nKeep alive: %d",
+            host.c_str(), port, keepAlive);
     // Connect
     int result = mosquitto_connect(mosquittoClient, host.c_str(), port, keepAlive);
-    if (result!=MOSQ_ERR_SUCCESS) {
-        LOG_ERROR("Error connecting");
+    if (result == MOSQ_ERR_INVAL) {
+        LOG_ERROR("Error connecting. The client might not be correctly set up");
+        exit(-1);
+    }
+    if(result == MOSQ_ERR_ERRNO) {
+        LOG_ERROR("Error connecting (%d)", errno);
         exit(-1);
     }
 }

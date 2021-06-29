@@ -104,7 +104,6 @@ void Tty::setBaudRate(int baudRate){
 }
 
 void Tty::type(const char* data) {
-	LOG_DEBUG("printing message to %s", fileName.c_str());
 	std::string dataStr(data);
 	size_t dataLength = dataStr.length();
 	(void) write(ttyFileDescriptor, data, dataLength);

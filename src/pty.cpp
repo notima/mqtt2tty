@@ -24,7 +24,7 @@ static std::vector<std::string> createdSymlinks;
  * This is used to not register the method multiple times if
  * there are multiple instances of Tty.
  */
-bool unlinkRegistered;
+bool unlinkRegistered; 
 
 /**
  * Delete all created symlinks. This will run when the program
@@ -47,12 +47,6 @@ Pty::Pty (const char* name) : Tty(name) {
 void Pty::openTty(){
 
     struct termios tt;
-
-    if (tcgetattr (STDIN_FILENO, &tt) < 0) {
-        LOG_ERROR("Cannot get terminal attributes of stdin");
-        exit(1);
-    }
-    cfmakeraw (&tt);
     if (openpty (&ttyFileDescriptor, &slaveFileDescriptor, slaveName, &tt, NULL) < 0) {
         LOG_ERROR("Cannot open pty");
         exit(1);
